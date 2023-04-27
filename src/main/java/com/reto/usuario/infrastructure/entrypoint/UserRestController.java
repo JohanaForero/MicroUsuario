@@ -1,6 +1,7 @@
 package com.reto.usuario.infrastructure.entrypoint;
 
 import com.reto.usuario.application.dto.request.UserRequestDto;
+import com.reto.usuario.application.dto.request.UserRequestOwnerDto;
 import com.reto.usuario.application.dto.response.UserResponseDto;
 import com.reto.usuario.application.handler.IUserHandler;
 import com.reto.usuario.application.dto.request.AuthCredentialsRequest;
@@ -25,8 +26,15 @@ public class UserRestController {
     @PostMapping(value = "/")
     @PreAuthorize(value = "hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> registerUserAsOwner(@RequestBody UserRequestDto usuarioRequestDto) {
-        userHandler.registerOwnerUser(usuarioRequestDto);
+        userHandler.registerUserWithOwnerRole(usuarioRequestDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/empleado")
+    @PreAuthorize(value = "hasRole('PROPIETARIO')")
+    public ResponseEntity<Void> registerUserAsEmployee(@RequestBody UserRequestOwnerDto userRequestOwnerDto) {
+        userHandler.registerUserWithEmployeeRole(userRequestOwnerDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")

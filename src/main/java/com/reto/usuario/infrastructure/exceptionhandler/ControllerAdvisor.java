@@ -3,6 +3,7 @@ package com.reto.usuario.infrastructure.exceptionhandler;
 import com.reto.usuario.domain.exception.EmailException;
 import com.reto.usuario.domain.exception.EmptyFieldsException;
 import com.reto.usuario.domain.exception.InvalidCellPhoneFormatException;
+import com.reto.usuario.domain.exception.RolNotFoundException;
 import com.reto.usuario.domain.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,12 @@ public class ControllerAdvisor {
             InvalidCellPhoneFormatException ignoredInvalidCellPhoneFormatException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_CELL_PHONE_FORMAT_EXCEPTION.getMessage()));
+    }
+
+    @ExceptionHandler(RolNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleRolNotFoundException(
+            RolNotFoundException ignoredRolNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROL_NOT_FOUND_EXCEPTION.getMessage()));
     }
 }

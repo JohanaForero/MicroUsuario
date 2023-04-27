@@ -7,6 +7,8 @@ public interface IUserServicePort {
 
     void registerUserWithOwnerRole(UserModel userModel);
 
+    void registerUserWithEmployeeRole(UserModel userModel);
+
     String signInUseCase(AuthCredentials authCredentials);
 
     UserModel findUsuarioByEmail(String email);

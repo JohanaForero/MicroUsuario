@@ -6,11 +6,12 @@ import com.reto.usuario.domain.exception.EmailException;
 import com.reto.usuario.domain.api.IUserServicePort;
 import com.reto.usuario.domain.exception.EmptyFieldsException;
 import com.reto.usuario.domain.exception.InvalidCellPhoneFormatException;
+import com.reto.usuario.domain.exception.RolNotFoundException;
 import com.reto.usuario.domain.exception.UserNotFoundException;
+import com.reto.usuario.domain.model.RolModel;
 import com.reto.usuario.domain.model.UserModel;
 import com.reto.usuario.domain.serviceproviderinterface.IRolPersistenceDomainPort;
 import com.reto.usuario.domain.serviceproviderinterface.IUserPersistenceDomainPort;
-import org.springframework.boot.SpringApplication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -30,16 +31,33 @@ public class UserUseCaseImpl implements IUserServicePort {
 
     @Override
     public void registerUserWithOwnerRole(UserModel userModel) {
+        restrictionsWhenSavingAUser(userModel);
+        userModel.setPassword(PasswordEncoderUtils.passwordEncoder().encode(userModel.getPassword()));
+        userModel.setRol(rolPersistenceDomainPort.findByNombre("PROPIETARIO"));
+        userPersistenceDomainPort.saveUser(userModel);
+    }
+
+    @Override
+    public void registerUserWithEmployeeRole(UserModel userModel) {
+        restrictionsWhenSavingAUser(userModel);
+        userModel.setPassword(PasswordEncoderUtils.passwordEncoder().encode(userModel.getPassword()));
+        RolModel rolModel = rolPersistenceDomainPort.findByIdRol(userModel.getRol().getIdRol());
+        if(rolModel == null) {
+            throw new RolNotFoundException("The rol not found");
+        } else if(!rolModel.getName().equals("EMPLEADO") ) {
+            throw new RolNotFoundException("The rol is different from employee");
+        }
+        userModel.setRol(rolModel);
+        userPersistenceDomainPort.saveUser(userModel);
+    }
+
+    private void restrictionsWhenSavingAUser(UserModel userModel) {
         if(userPersistenceDomainPort.existsByEmail(userModel.getEmail())) {
             throw new EmailException("The email " + userModel.getEmail()  + " already exists");
         }
         validateEmailStructure(userModel.getEmail());
         validateUserFieldsEmpty(userModel);
         validateUserCellPhone(userModel.getCellPhone());
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
-        userModel.setRol(rolPersistenceDomainPort.findByNombre("PROPIETARIO"));
-        userPersistenceDomainPort.saveUser(userModel);
     }
 
     private void validateUserFieldsEmpty(UserModel user) {

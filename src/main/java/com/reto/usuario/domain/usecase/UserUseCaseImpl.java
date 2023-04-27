@@ -51,6 +51,20 @@ public class UserUseCaseImpl implements IUserServicePort {
         userPersistenceDomainPort.saveUser(userModel);
     }
 
+    @Override
+    public void registerUserWithCustomerRole(UserModel userModel) {
+        restrictionsWhenSavingAUser(userModel);
+        userModel.setPassword(PasswordEncoderUtils.passwordEncoder().encode(userModel.getPassword()));
+        RolModel rolModel = rolPersistenceDomainPort.findByIdRol(userModel.getRol().getIdRol());
+        if(rolModel == null) {
+            throw new RolNotFoundException("The rol not found");
+        } else if(!rolModel.getName().equals("CLIENTE") ) {
+            throw new RolNotFoundException("The rol is different from customer");
+        }
+        userModel.setRol(rolModel);
+        userPersistenceDomainPort.saveUser(userModel);
+    }
+
     private void restrictionsWhenSavingAUser(UserModel userModel) {
         if(userPersistenceDomainPort.existsByEmail(userModel.getEmail())) {
             throw new EmailException("The email " + userModel.getEmail()  + " already exists");

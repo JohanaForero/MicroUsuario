@@ -58,7 +58,8 @@ public class WebSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/usuario-micro/usuario/login").permitAll()
+                        .requestMatchers("/usuario-micro/usuario/login", "/usuario-micro/usuario/cliente")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement( httpSecuritySessionManagementConfigurer ->

@@ -2,6 +2,7 @@ package com.reto.usuario.application.handler.implementation;
 
 
 import com.reto.usuario.application.dto.request.AuthCredentialsRequest;
+import com.reto.usuario.application.dto.request.UserRequestCustomerDto;
 import com.reto.usuario.application.dto.request.UserRequestDto;
 import com.reto.usuario.application.dto.request.UserRequestOwnerDto;
 import com.reto.usuario.application.dto.response.UserResponseDto;
@@ -48,6 +49,21 @@ public class UserHandlerImpl implements IUserHandler {
         userModel.setIdentificationDocument(userRequestOwnerDto.getIdentificationDocument());
         userModel.setRol(rolModel);
         userServicePort.registerUserWithEmployeeRole(userModel);
+    }
+
+    @Override
+    public void registerUserWithCustomerRole(UserRequestCustomerDto userRequestCustomerDto) {
+        RolModel rolModel = new RolModel();
+        rolModel.setIdRol(userRequestCustomerDto.getIdRol());
+        UserModel userModel = new UserModel();
+        userModel.setName(userRequestCustomerDto.getName());
+        userModel.setLastName(userRequestCustomerDto.getLastName());
+        userModel.setCellPhone(userRequestCustomerDto.getCellPhone());
+        userModel.setEmail(userRequestCustomerDto.getEmail());
+        userModel.setPassword(userRequestCustomerDto.getPassword());
+        userModel.setIdentificationDocument(userRequestCustomerDto.getIdentificationDocument());
+        userModel.setRol(rolModel);
+        userServicePort.registerUserWithCustomerRole(userModel);
     }
 
     @Override

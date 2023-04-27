@@ -1,5 +1,6 @@
 package com.reto.usuario.infrastructure.entrypoint;
 
+import com.reto.usuario.application.dto.request.UserRequestCustomerDto;
 import com.reto.usuario.application.dto.request.UserRequestDto;
 import com.reto.usuario.application.dto.request.UserRequestOwnerDto;
 import com.reto.usuario.application.dto.response.UserResponseDto;
@@ -25,8 +26,8 @@ public class UserRestController {
 
     @PostMapping(value = "/")
     @PreAuthorize(value = "hasRole('ADMINISTRADOR')")
-    public ResponseEntity<Void> registerUserAsOwner(@RequestBody UserRequestDto usuarioRequestDto) {
-        userHandler.registerUserWithOwnerRole(usuarioRequestDto);
+    public ResponseEntity<Void> registerUserAsOwner(@RequestBody UserRequestDto userRequestDto) {
+        userHandler.registerUserWithOwnerRole(userRequestDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -34,6 +35,12 @@ public class UserRestController {
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     public ResponseEntity<Void> registerUserAsEmployee(@RequestBody UserRequestOwnerDto userRequestOwnerDto) {
         userHandler.registerUserWithEmployeeRole(userRequestOwnerDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/cliente")
+    public ResponseEntity<Void> registerUserWithCustomerRole(@RequestBody UserRequestCustomerDto userRequestCustomerDto) {
+        userHandler.registerUserWithCustomerRole(userRequestCustomerDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
